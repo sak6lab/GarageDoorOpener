@@ -1,22 +1,14 @@
 <?php
-const DOOR_ONE_GPIO = 7;
-const DOOR_TWO_GPIO = 25;
+include '../src/Garage.php';
 if (isset($_GET['door'])) {
-    $door = $_GET['door'];
-    if ($door == '1') {
-        openDoor(DOOR_ONE_GPIO);
+    $garage = new Garage();
+    $door = intval($_GET['door']);
+    try {
+        $garage->toggleDoor($door);
         response(200,"Request sent");
+    } catch (LogicException $e) {
+        response(400,$e->getMessage());
     }
-    elseif ($door == '2') {
-        openDoor(DOOR_TWO_GPIO);
-        response(200,"Request sent");
-    }
-}
-
-function openDoor($gpio) {
-    exec("gpio write $gpio 0");
-    usleep(1000000);
-    exec("gpio write $gpio 1");
 }
 
 function response($status,$status_message) {
